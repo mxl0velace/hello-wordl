@@ -14,7 +14,6 @@ enum GameState {
 }
 
 interface GameProps {
-  maxGuesses: number;
   hidden: boolean;
 }
 

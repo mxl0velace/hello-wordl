@@ -94,7 +94,7 @@ function App() {
           tweet <a href="https://twitter.com/chordbug">@chordbug</a>.
         </div>
       )}
-      <Game maxGuesses={maxGuesses} hidden={about} />
+      <Game hidden={about} />
     </div>
   );
 }
