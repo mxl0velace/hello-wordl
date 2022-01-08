@@ -32,6 +32,7 @@ function Game(props: GameProps) {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>("");
   const [wordLength, setWordLength] = useState(5);
+  const [maxGuesses, setMaxGuesses] = useState(6);
   const [hint, setHint] = useState<string>(`Make your first guess!`);
   const [target, setTarget] = useState(() => {
     resetRng();
@@ -55,7 +56,7 @@ function Game(props: GameProps) {
       }
       return;
     }
-    if (guesses.length === props.maxGuesses) return;
+    if (guesses.length === maxGuesses) return;
     if (/^[a-z]$/.test(key)) {
       setCurrentGuess((guess) => (guess + key).slice(0, wordLength));
       setHint("");
@@ -76,7 +77,7 @@ function Game(props: GameProps) {
       if (currentGuess === target) {
         setHint("You won! (Enter to play again)");
         setGameState(GameState.Won);
-      } else if (guesses.length + 1 === props.maxGuesses) {
+      } else if (guesses.length + 1 === maxGuesses) {
         setHint(
           `You lost! The answer was ${target.toUpperCase()}. (Enter to play again)`
         );
@@ -100,7 +101,7 @@ function Game(props: GameProps) {
   }, [currentGuess, gameState]);
 
   let letterInfo = new Map<string, Clue>();
-  const rowDivs = Array(props.maxGuesses)
+  const rowDivs = Array(maxGuesses)
     .fill(undefined)
     .map((_, i) => {
       const guess = [...guesses, currentGuess][i] ?? "";
@@ -148,6 +149,26 @@ function Game(props: GameProps) {
             setTarget(randomTarget(length));
             setWordLength(length);
             setHint(`${length} letters`);
+            (document.activeElement as HTMLElement)?.blur();
+          }}
+        ></input>
+        <label htmlFor="maxGuesses">Guesses:</label>
+        <input
+          type="range"
+          min="4"
+          max="11"
+          id="maxGuesses"
+          disabled={
+            gameState === GameState.Playing &&
+            (guesses.length > 0 || currentGuess !== "")
+          }
+          value={maxGuesses}
+          onChange={(e) => {
+            const guesses = Number(e.target.value);
+            setGameState(GameState.Playing);
+            setGuesses([]);
+            setMaxGuesses(guesses);
+            setHint(`${guesses} guesses`);
             (document.activeElement as HTMLElement)?.blur();
           }}
         ></input>
